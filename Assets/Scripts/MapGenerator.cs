@@ -19,6 +19,14 @@ public class MapGenerator : MonoBehaviour
         GenerateMap();
     }
 
+    void Update()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            GenerateMap();
+        }
+    }
+
     void GenerateMap()
     {
         map = new int[width, height];
@@ -28,6 +36,10 @@ public class MapGenerator : MonoBehaviour
         {
             SmoothMap();
         }
+
+        MeshGenerator meshGen = GetComponent<MeshGenerator>();
+        // Passes the map to the mesh generator, along with the size of each square
+        meshGen.GenerateMesh(map, 1);
     }
 
     void RandomFillMap()
@@ -139,35 +151,35 @@ public class MapGenerator : MonoBehaviour
         return wallCount;
     }
 
-    private void OnDrawGizmos() 
-    {
-        if (map != null)
-        {
-            // Loop through every coordinate in our map
-            for (int x = 0; x < width; x++)
-            {
-                // For each column, loop through all the rows
-                for (int y = 0; y < height; y++)
-                {
-                    // If the coordinate is a wall
-                    if (map[x, y] == 1)
-                    {
-                        // Set the color to be black
-                        Gizmos.color = Color.black;
-                    }
-                    // Else, if the coordinate is a floor
-                    else
-                    {
-                        // Set the color to be white
-                        Gizmos.color = Color.white;
-                    }
+    // private void OnDrawGizmos() 
+    // {
+    //     if (map != null)
+    //     {
+    //         // Loop through every coordinate in our map
+    //         for (int x = 0; x < width; x++)
+    //         {
+    //             // For each column, loop through all the rows
+    //             for (int y = 0; y < height; y++)
+    //             {
+    //                 // If the coordinate is a wall
+    //                 if (map[x, y] == 1)
+    //                 {
+    //                     // Set the color to be black
+    //                     Gizmos.color = Color.black;
+    //                 }
+    //                 // Else, if the coordinate is a floor
+    //                 else
+    //                 {
+    //                     // Set the color to be white
+    //                     Gizmos.color = Color.white;
+    //                 }
 
-                    // Set a Vector 3 Position for the coordinate
-                    Vector3 pos = new Vector3(-width / 2 + x + 0.5f, -height / 2 + y + 0.5f, 0);
-                    // Draw a cube at the coordinate
-                    Gizmos.DrawCube(pos, Vector3.one);
-                }
-            }
-        }
-    }
+    //                 // Set a Vector 3 Position for the coordinate
+    //                 Vector3 pos = new Vector3(-width / 2 + x + 0.5f, -height / 2 + y + 0.5f, 0);
+    //                 // Draw a cube at the coordinate
+    //                 Gizmos.DrawCube(pos, Vector3.one);
+    //             }
+    //         }
+    //     }
+    // }
 }
