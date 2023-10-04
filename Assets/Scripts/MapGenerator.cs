@@ -37,9 +37,34 @@ public class MapGenerator : MonoBehaviour
             SmoothMap();
         }
 
+        // Create a border
+        int borderSize = 5;
+        int[,] borderedMap = new int[width + borderSize * 2, height + borderSize * 2];
+
+        // Loop through every coordinate in our map
+        for (int x = 0; x < borderedMap.GetLength(0); x++)
+        {
+            // For each column, loop through all the rows
+            for (int y = 0; y < borderedMap.GetLength(1); y++)
+            {
+                // If the coordinate is within the map
+                if (x >= borderSize && x < width + borderSize && y >= borderSize && y < height + borderSize)
+                {
+                    // Set the coordinate to be the map coordinate
+                    borderedMap[x, y] = map[x - borderSize, y - borderSize];
+                }
+                // Else, if the coordinate is NOT within the map
+                else
+                {
+                    // Set the coordinate to be a wall
+                    borderedMap[x, y] = 1;
+                }
+            }
+        }
+
         MeshGenerator meshGen = GetComponent<MeshGenerator>();
         // Passes the map to the mesh generator, along with the size of each square
-        meshGen.GenerateMesh(map, 1);
+        meshGen.GenerateMesh(borderedMap, 1);
     }
 
     void RandomFillMap()
@@ -121,7 +146,6 @@ public class MapGenerator : MonoBehaviour
         // Loop through every coordinate surrounding the given coordinate
         for (int neighbourX = gridX - 1; neighbourX <= gridX + 1; neighbourX++)
         {
-            // For each column, loop through all the rows
             for (int neighbourY = gridY - 1; neighbourY <= gridY + 1; neighbourY++)
             {
                 // If the coordinate is within the map
@@ -130,12 +154,7 @@ public class MapGenerator : MonoBehaviour
                     // If the coordinate is NOT the given coordinate
                     if (neighbourX != gridX || neighbourY != gridY)
                     {
-                        // If the coordinate is a wall
-                        if (map[neighbourX, neighbourY] == 1)
-                        {
-                            // Increment the number of walls
-                            wallCount++;
-                        }
+                       wallCount += map[neighbourX, neighbourY];
                     }
                 }
                 // Else, if the coordinate is NOT within the map
