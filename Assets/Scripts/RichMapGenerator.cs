@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using static System.Random;
 using UnityEngine;
 
-public class MapGenerator : MonoBehaviour
+public class RichMapGenerator : MonoBehaviour
 {
     // Cellular Automata
     public int width;

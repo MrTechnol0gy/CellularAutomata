@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MeshGenerator : MonoBehaviour
+public class RichMeshGenerator : MonoBehaviour
 {
     // Mesh Generation
     public SquareGrid squareGrid;
@@ -28,19 +28,14 @@ public class MeshGenerator : MonoBehaviour
         squareGrid = new SquareGrid(map, squareSize);
 
         // Create a new mesh for walls
-        wallMesh = GenerateWalls();
+        wallMesh = CreateWallMesh();
 
         // Create a new mesh for floors
         floorMesh = GenerateFloors();
+    }
 
-        // Set the wall mesh to the appropriate mesh filter
-        walls.mesh = wallMesh;
-
-        // Set the floor mesh to the appropriate mesh filter
-        floors.mesh = floorMesh;
-
-        // TODO: Fix the broken tutorial
-
+    Mesh GenerateFloors()
+    {
         // Create lists of vertices and triangles
         vertices = new List<Vector3>();
         triangles = new List<int>();
@@ -56,39 +51,26 @@ public class MeshGenerator : MonoBehaviour
         }
 
         // Create a new mesh
-        Mesh mesh = new Mesh();
-        GetComponent<MeshFilter>().mesh = mesh;
+        floorMesh = new Mesh();
+        GetComponent<MeshFilter>().mesh = floorMesh;
 
         // Set the vertices and triangles of the mesh
-        mesh.vertices = vertices.ToArray();
-        mesh.triangles = triangles.ToArray();
+        floorMesh.vertices = vertices.ToArray();
+        floorMesh.triangles = triangles.ToArray();
         // Recalculate the normals of the mesh
-        mesh.RecalculateNormals();
+        floorMesh.RecalculateNormals();
 
-        // Create a wall mesh
-        CreateWallMesh();
+        return floorMesh;
     }
 
-    void DebugDrawNormals(Mesh mesh)
-    {
-        // Debug-draw normals in the scene view for debugging purposes
-        for (int i = 0; i < mesh.normals.Length; i++)
-        {
-            Vector3 vertex = mesh.vertices[i];
-            Vector3 normal = mesh.normals[i];
-            float debugNormalLength = 1f;
-            Debug.DrawRay(vertex, normal * debugNormalLength, Color.green);
-        }
-    }
-
-    void CreateWallMesh()
+    Mesh CreateWallMesh()
     {
         // Calculate the mesh outlines
         CalculateMeshOutlines();
 
         List<Vector3> wallVertices = new List<Vector3>();
         List<int> wallTriangles = new List<int>();
-        Mesh wallMesh = new Mesh();
+        wallMesh = new Mesh();
         float wallHeight = 5;
 
         foreach (List<int> outline in outlines)
@@ -114,8 +96,24 @@ public class MeshGenerator : MonoBehaviour
         // Set the vertices and triangles of the wall mesh
         wallMesh.vertices = wallVertices.ToArray();
         wallMesh.triangles = wallTriangles.ToArray();
-        walls.mesh = wallMesh;
+
+        // Recalculate the normals of the wall mesh
+        wallMesh.RecalculateNormals();
+
+        return wallMesh;
     }
+    void DebugDrawNormals(Mesh mesh)
+    {
+        // Debug-draw normals in the scene view for debugging purposes
+        for (int i = 0; i < mesh.normals.Length; i++)
+        {
+            Vector3 vertex = mesh.vertices[i];
+            Vector3 normal = mesh.normals[i];
+            float debugNormalLength = 1f;
+            Debug.DrawRay(vertex, normal * debugNormalLength, Color.green);
+        }
+    }
+
 
     // Triangulation
     void TriangulateSquare(Square square)
